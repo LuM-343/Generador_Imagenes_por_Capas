@@ -1,0 +1,1 @@
+//Matriz dispersa en la que se guardaran las capas para generar imagenes//

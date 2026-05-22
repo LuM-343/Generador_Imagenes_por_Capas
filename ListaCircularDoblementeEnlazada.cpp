@@ -1,0 +1,1 @@
+//Lista doblemente enlazada, encargada de guardar las imagenes creadas//
