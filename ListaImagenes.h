@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <fstream>
 #include "ArbolCapas.h" 
 #include "ListaSimpleCapas.h" 
 
@@ -60,7 +61,7 @@ public:
             temp = temp->siguiente;           
         } while (temp != cabeza);
     }
-    
+
     Imagen* buscar(int id) {
         if (cabeza == NULL) {
             return NULL; // La lista está vacía
@@ -75,5 +76,43 @@ public:
         } while (temp != cabeza);
 
         return NULL; // Dio la vuelta completa y no la encontró
+    }
+
+    void graficarLista() {
+        if (cabeza == NULL) {
+            cout << "[AVISO] La lista de imagenes esta vacia." << endl;
+            return;
+        }
+
+        ofstream archivo("lista_imagenes.dot");
+        archivo << "digraph ListaImagenes {\n";
+        archivo << "  rankdir=LR;\n";
+        archivo << "  node [shape=record, style=filled, fillcolor=lightyellow];\n";
+
+        Imagen* temp = cabeza;
+        
+        // 1. Declarar todos los nodos de imágenes primero para alinearlos
+        archivo << "  { rank=same; ";
+        do {
+            archivo << "Img" << temp->id << " [label=\"{ID: " << temp->id << " | " << temp->nombre << "}\"]; ";
+            temp = temp->siguiente;
+        } while (temp != cabeza);
+        archivo << "}\n";
+
+        // 2. Conectar la lista doblemente enlazada circular
+        temp = cabeza;
+        do {
+            archivo << "  Img" << temp->id << " -> Img" << temp->siguiente->id << ";\n";
+            archivo << "  Img" << temp->id << " -> Img" << temp->anterior->id << ";\n";
+            
+               
+            temp = temp->siguiente;
+        } while (temp != cabeza);
+
+        archivo << "}\n";
+        archivo.close();
+
+        system("dot -Tpng lista_imagenes.dot -o Reporte_ListaImagenes.png");
+        cout << "[OK] Lista circular de imagenes graficada." << endl;
     }
 };

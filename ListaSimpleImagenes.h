@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
-
+#include <fstream>
 using namespace std;
 
 // Nodo para la lista simple de imágenes de un usuario
@@ -50,5 +50,45 @@ public:
             cout << "   -> [ID: " << temp->idImagen << "] " << temp->nombreImagen << endl;
             temp = temp->siguiente;
         }
+    }
+
+    // Método para graficar la lista simple de imágenes de un usuario
+    void graficarLista(string username) {
+        if (cabeza == nullptr) {
+            cout << "[AVISO] El usuario '" << username << "' no tiene imagenes para graficar." << endl;
+            return;
+        }
+
+        string nombreArchivo = "Imagenes_" + username;
+        ofstream archivo(nombreArchivo + ".dot");
+        
+        archivo << "digraph ListaImagenesUsuario {\n";
+        archivo << "  rankdir=LR;\n";
+        archivo << "  node [shape=record, style=filled, fillcolor=plum1];\n";
+        
+        // Título del grafo
+        archivo << "  labelloc=\"t\";\n";
+        archivo << "  label=\"Imagenes creadas por: " << username << "\";\n";
+
+        NodoImagenSimple* temp = cabeza;
+        
+        // Declarar nodos y conexiones
+        while (temp != nullptr) {
+            // El formato record permite mostrar ID y Nombre divididos por una línea (|)
+            archivo << "  Img" << temp->idImagen << " [label=\"{ID: " << temp->idImagen << " | " << temp->nombreImagen << "}\"];\n";
+            
+            if (temp->siguiente != nullptr) {
+                archivo << "  Img" << temp->idImagen << " -> Img" << temp->siguiente->idImagen << ";\n";
+            }
+            temp = temp->siguiente;
+        }
+
+        archivo << "}\n";
+        archivo.close();
+
+        // Ejecutar Graphviz
+        string comando = "dot -Tpng " + nombreArchivo + ".dot -o " + nombreArchivo + ".png";
+        system(comando.c_str());
+        cout << "[OK] Lista de imagenes del usuario graficada como " << nombreArchivo << ".png" << endl;
     }
 };

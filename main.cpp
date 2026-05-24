@@ -15,6 +15,7 @@ ListaCircularDobleImagenes galeriaGlobal;
 void menuInicio();
 void menuUsuario(UserNode* usuarioActual);
 void menuEditor(Imagen* imagenActual);
+void menuReportes(); // <-- NUEVO PROTOTIPO
 
 int main() {
     // Insertamos un par de usuarios y datos de prueba para no empezar desde cero
@@ -27,19 +28,20 @@ int main() {
 }
 
 // =========================================================================
-// LEVEL 1: MENÚ DE INICIO (Login / Registro)
+// LEVEL 1: MENÚ DE INICIO (Login / Registro / Reportes)
 // =========================================================================
 void menuInicio() {
     int opcion = 0;
     string username;
 
-    while (opcion != 3) {
+    while (opcion != 4) {
         cout << "\n=========================================" << endl;
         cout << "         EDITOR DE PIXEL ART - INICIO    " << endl;
         cout << "=========================================" << endl;
         cout << "1. Iniciar Sesion" << endl;
         cout << "2. Registrar nuevo usuario" << endl;
-        cout << "3. Salir del programa" << endl;
+        cout << "3. Reportes de Estructuras (Graphviz)" << endl; // <-- NUEVA OPCION
+        cout << "4. Salir del programa" << endl;
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
@@ -48,11 +50,10 @@ void menuInicio() {
                 cout << "\nIngrese su nombre de usuario: ";
                 cin >> username;
                 
-                // Buscamos al usuario en el árbol AVL
                 UserNode* usuarioLogueado = sistemaUsuarios.search(username);
                 if (usuarioLogueado != nullptr) {
                     cout << "\n[OK] Bienvenido de nuevo, " << username << "!" << endl;
-                    menuUsuario(usuarioLogueado); // Pasar al siguiente nivel de menú
+                    menuUsuario(usuarioLogueado);
                 } else {
                     cout << "\n[ERROR] El usuario '" << username << "' no existe." << endl;
                 }
@@ -61,7 +62,6 @@ void menuInicio() {
             case 2:
                 cout << "\nIngrese el nombre para el nuevo usuario: ";
                 cin >> username;
-                // Verificamos primero si ya existe para evitar duplicados
                 if (sistemaUsuarios.search(username) != nullptr) {
                     cout << "\n[ERROR] El nombre de usuario ya esta en uso." << endl;
                 } else {
@@ -70,10 +70,98 @@ void menuInicio() {
                 }
                 break;
             case 3:
+                menuReportes(); // Llamamos al nuevo submenú
+                break;
+            case 4:
                 cout << "\nGracias por usar el programa. ¡Hasta pronto!" << endl;
                 break;
             default:
                 cout << "\n[ERROR] Opcion no valida. Intente de nuevo." << endl;
+        }
+    }
+}
+
+// =========================================================================
+// SUBMENÚ: REPORTES DEL ESTADO DE MEMORIA
+// =========================================================================
+void menuReportes() {
+    int opcion = 0;
+
+    while (opcion != 6) {
+        cout << "\n--- REPORTES DE MEMORIA (GRAPHVIZ) ---" << endl;
+        cout << "1. Ver Arbol AVL de Usuarios" << endl;
+        cout << "2. Ver Lista Circular Doble de Imagenes" << endl;
+        cout << "3. Ver Arbol AVL de Capas de una Imagen" << endl;
+        cout << "4. Ver Matriz Dispersa de una Capa" << endl;
+        cout << "5. Ver Lista Simple de Imagenes de un Usuario" << endl;
+        cout << "6. Regresar al Menu Principal" << endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                cout << "\nGenerando reporte de Usuarios..." << endl;
+                sistemaUsuarios.graficarArbol();
+                break;
+            
+            case 2:
+                cout << "\nGenerando reporte de la Galeria Global..." << endl;
+                galeriaGlobal.graficarLista();
+                break;
+
+            case 3: {
+                int idImg;
+                cout << "\nIngrese el ID de la imagen para ver su arbol de capas: ";
+                cin >> idImg;
+                Imagen* img = galeriaGlobal.buscar(idImg);
+                if (img != nullptr) {
+                    img->arbolCapas->graficarArbol("ArbolCapas_Img_" + to_string(idImg));
+                } else {
+                    cout << "[ERROR] Imagen no encontrada." << endl;
+                }
+                break;
+            }
+
+            case 4: {
+                int idImg, idCapa;
+                cout << "\nIngrese el ID de la imagen dueña de la capa: ";
+                cin >> idImg;
+                Imagen* img = galeriaGlobal.buscar(idImg);
+                
+                if (img != nullptr) {
+                    cout << "Ingrese el ID de la capa a graficar: ";
+                    cin >> idCapa;
+                    LayerNode* capa = img->arbolCapas->search(idCapa);
+                    if (capa != nullptr) {
+                        capa->matriz->graficarMatriz("Matriz_Img" + to_string(idImg) + "_Capa" + to_string(idCapa));
+                    } else {
+                        cout << "[ERROR] Capa no encontrada en esta imagen." << endl;
+                    }
+                } else {
+                    cout << "[ERROR] Imagen no encontrada." << endl;
+                }
+                break;
+            }
+
+            case 5: {
+                string user;
+                cout << "\nIngrese el nombre del usuario: ";
+                cin >> user;
+                UserNode* nodoUser = sistemaUsuarios.search(user);
+                if (nodoUser != nullptr) {
+                    nodoUser->imagenesCreadas->graficarLista(user);
+                } else {
+                    cout << "[ERROR] Usuario no encontrado." << endl;
+                }
+                break;
+            }
+
+            case 6:
+                cout << "\nRegresando al menu principal..." << endl;
+                break;
+
+            default:
+                cout << "\n[ERROR] Opcion no valida." << endl;
         }
     }
 }

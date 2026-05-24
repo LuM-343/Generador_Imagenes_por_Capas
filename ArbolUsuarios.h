@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include "ListaSimpleImagenes.h" 
+#include <fstream>
 
 using namespace std;
 
@@ -101,6 +102,21 @@ private:
         return search(node->left, username);
     }
 
+    void generarDOT(UserNode* node, ofstream& archivo) {
+        if (node != nullptr) {
+            // Escribir relación con el hijo izquierdo
+            if (node->left != nullptr) {
+                archivo << "    \"" << node->username << "\" -> \"" << node->left->username << "\";\n";
+                generarDOT(node->left, archivo);
+            }
+            // Escribir relación con el hijo derecho
+            if (node->right != nullptr) {
+                archivo << "    \"" << node->username << "\" -> \"" << node->right->username << "\";\n";
+                generarDOT(node->right, archivo);
+            }
+        }
+    }
+
 public:
     UserAVLTree() { root = nullptr; }
 
@@ -115,5 +131,29 @@ public:
     void display() {
         inorden(root);
         cout << endl;
+    }
+
+    void graficarArbol() {
+        if (root == nullptr) {
+            cout << "[AVISO] El arbol de usuarios esta vacio." << endl;
+            return;
+        }
+
+        // 1. Crear el archivo .dot
+        ofstream archivo("arbol_usuarios.dot");
+        archivo << "digraph G {\n";
+        archivo << "    node [shape=record, style=filled, fillcolor=lightblue];\n";
+        
+        // 2. Llamar a la función recursiva
+        generarDOT(root, archivo);
+        
+        archivo << "}\n";
+        archivo.close();
+
+        // 3. Ejecutar comando de Graphviz en la terminal
+        // Nota: Debes tener Graphviz instalado en tu PC y agregado al PATH
+        system("dot -Tpng arbol_usuarios.dot -o Reporte_Usuarios.png");
+        
+        cout << "[OK] Reporte generado exitosamente como 'Reporte_Usuarios.png'." << endl;
     }
 };

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <fstream>
 #include "MatrizDispersa.h" // Conectamos la matriz con la capa
 
 using namespace std;
@@ -100,6 +101,21 @@ private:
         return search(node->left, id);
     }
 
+    void generarDOT(LayerNode* node, ofstream& archivo) {
+        if (node != nullptr) {
+            archivo << "    \"Capa_" << node->id << "\\n" << node->name << "\" [style=filled, fillcolor=lightgreen];\n";
+            
+            if (node->left != nullptr) {
+                archivo << "    \"Capa_" << node->id << "\\n" << node->name << "\" -> \"Capa_" << node->left->id << "\\n" << node->left->name << "\";\n";
+                generarDOT(node->left, archivo);
+            }
+            if (node->right != nullptr) {
+                archivo << "    \"Capa_" << node->id << "\\n" << node->name << "\" -> \"Capa_" << node->right->id << "\\n" << node->right->name << "\";\n";
+                generarDOT(node->right, archivo);
+            }
+        }
+    }
+
 public:
     LayerAVLTree() { root = nullptr; }
 
@@ -114,5 +130,23 @@ public:
 
     LayerNode* search(int id) {
         return search(root, id);
+    }
+
+    void graficarArbol(string nombreArchivo) {
+        if (root == nullptr) {
+            cout << "[AVISO] El arbol de capas esta vacio." << endl;
+            return;
+        }
+
+        ofstream archivo(nombreArchivo + ".dot");
+        archivo << "digraph ArbolCapas {\n";
+        archivo << "    node [shape=box];\n";
+        generarDOT(root, archivo);
+        archivo << "}\n";
+        archivo.close();
+
+        string comando = "dot -Tpng " + nombreArchivo + ".dot -o " + nombreArchivo + ".png";
+        system(comando.c_str());
+        cout << "[OK] Arbol de capas graficado como " << nombreArchivo << ".png" << endl;
     }
 };
