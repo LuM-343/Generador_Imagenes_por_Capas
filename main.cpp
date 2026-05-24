@@ -99,25 +99,46 @@ void menuCargaMasiva() {
         cout << "3. Cargar archivo de Usuarios (.usr)" << endl;
         cout << "4. Regresar al Menu Principal" << endl;
         cout << "Seleccione una opcion: ";
-        cin >> opcion;
+        
+        // Seguro contra letras o errores en el buffer
+        if (!(cin >> opcion)) {
+            cin.clear(); 
+            cin.ignore(10000, '\n'); 
+            cout << "\n[ERROR] Entrada no valida. Por favor, ingrese un numero." << endl;
+            continue; // Reinicia el ciclo
+        }
 
         switch (opcion) {
             case 1:
                 cout << "\nIngrese la ruta del archivo de capas (.cap): ";
-                cin >> rutaArchivo;
-                // Llamamos a la función estática pasando nuestra estructura global
+                cin.ignore(); // Limpiamos el salto de linea ('\n') antes de usar getline
+                getline(cin, rutaArchivo); // Se lee toda la ruta evitando espacios
+                
+                //Previene el error de copiar la ruta de acceso con las comillas
+                if (!rutaArchivo.empty() && rutaArchivo.front() == '"' && rutaArchivo.back() == '"') {
+                    rutaArchivo = rutaArchivo.substr(1, rutaArchivo.length() - 2);
+                }
+                
                 CargaMasiva::cargarCapas(rutaArchivo, arbolCapasGlobal);
                 break;
             
             case 2:
                 cout << "\nIngrese la ruta del archivo de imagenes (.im): ";
-                cin >> rutaArchivo;
+                cin.ignore(); 
+                getline(cin, rutaArchivo);
+                if (!rutaArchivo.empty() && rutaArchivo.front() == '"' && rutaArchivo.back() == '"') {
+                    rutaArchivo = rutaArchivo.substr(1, rutaArchivo.length() - 2);
+                }
                 CargaMasiva::cargarImagenes(rutaArchivo, galeriaGlobal);
                 break;
 
             case 3:
                 cout << "\nIngrese la ruta del archivo de usuarios (.usr): ";
-                cin >> rutaArchivo;
+                cin.ignore();
+                getline(cin, rutaArchivo);
+                if (!rutaArchivo.empty() && rutaArchivo.front() == '"' && rutaArchivo.back() == '"') {
+                    rutaArchivo = rutaArchivo.substr(1, rutaArchivo.length() - 2);
+                }
                 CargaMasiva::cargarUsuarios(rutaArchivo, sistemaUsuarios, galeriaGlobal);
                 break;
 
