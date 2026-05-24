@@ -4,44 +4,44 @@
 #include "ListaImagenes.h"
 #include "ArbolCapas.h"
 #include "MatrizDispersa.h"
+#include "CargaMasiva.h"
 
 using namespace std;
 
 // Declaración de estructuras globales necesarias para todo el sistema
 UserAVLTree sistemaUsuarios;
 ListaCircularDobleImagenes galeriaGlobal;
+LayerAVLTree arbolCapasGlobal;
 
 // Prototipos de funciones de los menús
 void menuInicio();
 void menuUsuario(UserNode* usuarioActual);
 void menuEditor(Imagen* imagenActual);
-void menuReportes(); // <-- NUEVO PROTOTIPO
+void menuReportes();
+void menuCargaMasiva();
 
 int main() {
-    // Insertamos un par de usuarios y datos de prueba para no empezar desde cero
-    sistemaUsuarios.insert("carlos_art");
-    sistemaUsuarios.insert("ana_pixel");
-    
     // Iniciar el sistema
     menuInicio();
     return 0;
 }
 
 // =========================================================================
-// LEVEL 1: MENÚ DE INICIO (Login / Registro / Reportes)
+// LEVEL 1: MENÚ DE INICIO (Login / Registro / Reportes / Carga Masiva)
 // =========================================================================
 void menuInicio() {
     int opcion = 0;
     string username;
 
-    while (opcion != 4) {
+    while (opcion != 5) { // Cambiamos a 5 opciones
         cout << "\n=========================================" << endl;
         cout << "         EDITOR DE PIXEL ART - INICIO    " << endl;
         cout << "=========================================" << endl;
         cout << "1. Iniciar Sesion" << endl;
         cout << "2. Registrar nuevo usuario" << endl;
-        cout << "3. Reportes de Estructuras (Graphviz)" << endl; // <-- NUEVA OPCION
-        cout << "4. Salir del programa" << endl;
+        cout << "3. Reportes de Estructuras (Graphviz)" << endl; 
+        cout << "4. Carga Masiva de Datos" << endl; // <-- NUEVA OPCIÓN
+        cout << "5. Salir del programa" << endl;
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
@@ -70,13 +70,63 @@ void menuInicio() {
                 }
                 break;
             case 3:
-                menuReportes(); // Llamamos al nuevo submenú
+                menuReportes(); 
                 break;
             case 4:
+                menuCargaMasiva(); 
+                break;
+            case 5:
                 cout << "\nGracias por usar el programa. ¡Hasta pronto!" << endl;
                 break;
             default:
                 cout << "\n[ERROR] Opcion no valida. Intente de nuevo." << endl;
+        }
+    }
+}
+
+// =========================================================================
+// SUBMENÚ: CARGA MASIVA DE DATOS
+// =========================================================================
+void menuCargaMasiva() {
+    int opcion = 0;
+    string rutaArchivo;
+
+    while (opcion != 4) {
+        cout << "\n--- CARGA MASIVA DE DATOS ---" << endl;
+        cout << "Recuerde el orden de carga: 1. Capas -> 2. Imagenes -> 3. Usuarios" << endl;
+        cout << "1. Cargar archivo de Capas (.cap)" << endl;
+        cout << "2. Cargar archivo de Imagenes (.im)" << endl;
+        cout << "3. Cargar archivo de Usuarios (.usr)" << endl;
+        cout << "4. Regresar al Menu Principal" << endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                cout << "\nIngrese la ruta del archivo de capas (.cap): ";
+                cin >> rutaArchivo;
+                // Llamamos a la función estática pasando nuestra estructura global
+                CargaMasiva::cargarCapas(rutaArchivo, arbolCapasGlobal);
+                break;
+            
+            case 2:
+                cout << "\nIngrese la ruta del archivo de imagenes (.im): ";
+                cin >> rutaArchivo;
+                CargaMasiva::cargarImagenes(rutaArchivo, galeriaGlobal);
+                break;
+
+            case 3:
+                cout << "\nIngrese la ruta del archivo de usuarios (.usr): ";
+                cin >> rutaArchivo;
+                CargaMasiva::cargarUsuarios(rutaArchivo, sistemaUsuarios, galeriaGlobal);
+                break;
+
+            case 4:
+                cout << "\nRegresando al menu principal..." << endl;
+                break;
+
+            default:
+                cout << "\n[ERROR] Opcion no valida." << endl;
         }
     }
 }
