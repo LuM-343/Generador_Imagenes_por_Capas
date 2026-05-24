@@ -25,6 +25,19 @@ struct Imagen {
     }
 };
 
+// Método auxiliar para limpiar texto antes de enviarlo a Graphviz
+string sanitizarTexto(string texto) {
+    string nuevo = "";
+    for (char c : texto) {
+        // Solo permitimos letras, números y guiones bajos para evitar errores
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ' ' || c == '_') {
+            nuevo += c;
+        }
+        // Si encuentras una 'ó', puedes reemplazarla manualmente o ignorarla
+    }
+    return nuevo;
+}
+
 class ListaCircularDobleImagenes {
 private:
     Imagen* cabeza = NULL;
@@ -98,7 +111,8 @@ public:
         do {
             archivo << "  Img" << temp->id << " [label=<\n";
             archivo << "    <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"lightyellow\">\n";
-            archivo << "      <TR><TD>ID: " << temp->id << "</TD><TD>" << temp->nombre << "</TD></TR>\n";
+            // Aplicamos sanitizarTexto al nombre
+            archivo << "      <TR><TD>ID: " << temp->id << "</TD><TD>" << sanitizarTexto(temp->nombre) << "</TD></TR>\n";
             archivo << "    </TABLE>>];\n";
             temp = temp->siguiente;
         } while (temp != cabeza);
