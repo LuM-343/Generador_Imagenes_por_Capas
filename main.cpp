@@ -18,7 +18,7 @@ ListaCircularDobleImagenes galeriaGlobal;
 LayerAVLTree arbolCapasGlobal;
 
 // ==========================================
-// PROTOTIPOS DE FUNCIONES (MENÚS)
+// PROTOTIPOS DE FUNCIONES (MENUS)
 // ==========================================
 void menuInicio();
 void menuUsuario(UserNode* usuarioActual);
@@ -28,7 +28,7 @@ void menuCargaMasiva();
 void menuGeneracionHTML();
 
 // ==========================================
-// FUNCIÓN PRINCIPAL
+// FUNCIoN PRINCIPAL
 // ==========================================
 int main() {
     menuInicio();
@@ -172,7 +172,7 @@ void menuEditor(Imagen* imagenActual) {
 
         switch (opcion) {
             case 1: {
-                int idCapa; cout << "\nIngrese el ID numerico para añadir capa: "; cin >> idCapa;
+                int idCapa; cout << "\nIngrese el ID numerico para anadir capa: "; cin >> idCapa;
                 if (arbolCapasGlobal.search(idCapa) == nullptr) {
                     cout << "[ERROR] Esta capa no existe en el arbol global. Creela primero." << endl; break;
                 }
@@ -294,7 +294,7 @@ void menuCargaMasiva() {
 }
 
 // ==========================================
-// 6. MENÚ DE GENERACIÓN HTML
+// 6. MENÚ DE GENERACIoN HTML
 // ==========================================
 void menuGeneracionHTML() {
     int opcion = 0;
