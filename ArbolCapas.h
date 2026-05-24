@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <fstream>
+#include <vector>
 #include "MatrizDispersa.h" // Conectamos la matriz con la capa
 
 using namespace std;
@@ -148,5 +149,38 @@ public:
         string comando = "dot -Tpng " + nombreArchivo + ".dot -o " + nombreArchivo + ".png";
         system(comando.c_str());
         cout << "[OK] Arbol de capas graficado como " << nombreArchivo << ".png" << endl;
+    }
+
+    // Función auxiliar para Inorden Limitado
+    void inordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
+        if (node == nullptr || lista.size() >= limite) return;
+        inordenLimitado(node->left, lista, limite);
+        if (lista.size() < limite) lista.push_back(node);
+        inordenLimitado(node->right, lista, limite);
+    }
+
+    // Función auxiliar para Preorden Limitado
+    void preordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
+        if (node == nullptr || lista.size() >= limite) return;
+        lista.push_back(node);
+        preordenLimitado(node->left, lista, limite);
+        preordenLimitado(node->right, lista, limite);
+    }
+
+    // Función auxiliar para Postorden Limitado
+    void postordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
+        if (node == nullptr || lista.size() >= limite) return;
+        postordenLimitado(node->left, lista, limite);
+        postordenLimitado(node->right, lista, limite);
+        if (lista.size() < limite) lista.push_back(node);
+    }
+
+    // Métodos para obtener los vectores
+    vector<LayerNode*> obtenerCapas(int limite, string recorrido) {
+        vector<LayerNode*> lista;
+        if (recorrido == "inorden") inordenLimitado(root, lista, limite);
+        else if (recorrido == "preorden") preordenLimitado(root, lista, limite);
+        else if (recorrido == "postorden") postordenLimitado(root, lista, limite);
+        return lista;
     }
 };

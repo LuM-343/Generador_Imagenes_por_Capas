@@ -260,4 +260,33 @@ public:
         system(comando.c_str());
         cout << "[OK] Matriz graficada como " << nombreArchivo << ".png" << endl;
     }
+
+    // Obtiene las dimensiones máximas para el lienzo HTML
+    void obtenerDimensionesMaximas(int &maxR, int &maxC) {
+        Header* tempRow = rowHeaderRoot;
+        while(tempRow) {
+            if(tempRow->index > maxR) maxR = tempRow->index;
+            tempRow = tempRow->next;
+        }
+        Header* tempCol = colHeaderRoot;
+        while(tempCol) {
+            if(tempCol->index > maxC) maxC = tempCol->index;
+            tempCol = tempCol->next;
+        }
+    }
+
+    // Fusiona (superpone) los pixeles de esta matriz en otra matriz objetivo
+    void superponerEn(LayerMatrix* lienzoFinal) {
+        Header* tempRow = rowHeaderRoot;
+        while (tempRow != nullptr) {
+            Node* tempNode = tempRow->firstNode;
+            while (tempNode != nullptr) {
+                // Al insertar en el lienzo final, sobreescribe automáticamente
+                // cualquier color que estuviera abajo en la misma coordenada
+                lienzoFinal->insert(tempNode->row, tempNode->col, tempNode->color);
+                tempNode = tempNode->right;
+            }
+            tempRow = tempRow->next;
+        }
+    }
 };
