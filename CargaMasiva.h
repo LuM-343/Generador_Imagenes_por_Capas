@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <stdexcept>
 #include "ArbolUsuarios.h"
 #include "ListaImagenes.h"
 #include "ArbolCapas.h"
@@ -31,35 +32,40 @@ public:
             if (inicio == string::npos) continue; // Línea vacía
             linea = linea.substr(inicio);
 
-            if (linea.find("{") != string::npos) {
-                // Extraer el ID de la capa
-                string idStr = linea.substr(0, linea.find("{"));
-                idCapaActual = stoi(idStr);
-                
-                // Insertamos la nueva capa en el árbol general (asumimos un nombre por defecto)
-                arbolCapasGlobal.insert(idCapaActual, "Capa_Masiva_" + to_string(idCapaActual));
-                nodoCapaActual = arbolCapasGlobal.search(idCapaActual);
-                
-            } else if (linea.find("}") != string::npos) {
-                // Fin de la capa actual
-                idCapaActual = -1;
-                nodoCapaActual = nullptr;
-                
-            } else if (linea.find(";") != string::npos && nodoCapaActual != nullptr) {
-                // Leer los pixeles: fila, columna, color;
-                // Reemplazamos las comas y el punto y coma con espacios para usar stringstream
-                for (char& c : linea) {
-                    if (c == ',' || c == ';') c = ' ';
+            try { // <-- INICIO DEL SEGURO PARA CAPAS
+                if (linea.find("{") != string::npos) {
+                    // Extraer el ID de la capa
+                    string idStr = linea.substr(0, linea.find("{"));
+                    idCapaActual = stoi(idStr); // Si falla, salta al catch
+                    
+                    // Insertamos la nueva capa en el árbol general
+                    arbolCapasGlobal.insert(idCapaActual, "Capa_Masiva_" + to_string(idCapaActual));
+                    nodoCapaActual = arbolCapasGlobal.search(idCapaActual);
+                    
+                } else if (linea.find("}") != string::npos) {
+                    // Fin de la capa actual
+                    idCapaActual = -1;
+                    nodoCapaActual = nullptr;
+                    
+                } else if (linea.find(";") != string::npos && nodoCapaActual != nullptr) {
+                    // Leer los pixeles: fila, columna, color;
+                    // Reemplazamos las comas y el punto y coma con espacios para usar stringstream
+                    for (char& c : linea) {
+                        if (c == ',' || c == ';') c = ' ';
+                    }
+                    
+                    stringstream ss(linea);
+                    int fila, col;
+                    string colorHex;
+                    
+                    if (ss >> fila >> col >> colorHex) {
+                        // Insertamos el pixel en la matriz dispersa de la capa actual
+                        nodoCapaActual->matriz->insert(fila, col, colorHex);
+                    }
                 }
-                
-                stringstream ss(linea);
-                int fila, col;
-                string colorHex;
-                
-                if (ss >> fila >> col >> colorHex) {
-                    // Insertamos el pixel en la matriz dispersa de la capa actual
-                    nodoCapaActual->matriz->insert(fila, col, colorHex);
-                }
+            } catch (const exception& e) {
+                // Si hay un error de conversión (ej. letras en lugar de números), no crashea
+                cout << "[ADVERTENCIA] Error de sintaxis en la linea, se omitira: " << linea << endl;
             }
         }
         archivo.close();
@@ -82,28 +88,34 @@ public:
             size_t posLlaveCierra = linea.find("}");
             
             if (posLlaveAbre != string::npos && posLlaveCierra != string::npos) {
-                // Extraer ID de la imagen
-                string idImgStr = linea.substr(0, posLlaveAbre);
-                int idImagen = stoi(idImgStr);
-                
-                // Insertar en la Lista Circular Doble
-                galeriaGlobal.insertar(idImagen, "Imagen_Masiva_" + to_string(idImagen));
-                Imagen* imgInsertada = galeriaGlobal.buscar(idImagen);
+                try { // <-- INICIO DEL SEGURO PARA IMÁGENES
+                    // Extraer ID de la imagen
+                    string idImgStr = linea.substr(0, posLlaveAbre);
+                    int idImagen = stoi(idImgStr);
+                    
+                    // Insertar en la Lista Circular Doble
+                    galeriaGlobal.insertar(idImagen, "Imagen_Masiva_" + to_string(idImagen));
+                    Imagen* imgInsertada = galeriaGlobal.buscar(idImagen);
 
-                // Extraer las capas separadas por coma
-                string capasStr = linea.substr(posLlaveAbre + 1, posLlaveCierra - posLlaveAbre - 1);
-                
-                if (!capasStr.empty() && imgInsertada != nullptr) {
-                    stringstream ss(capasStr);
-                    string idCapaItem;
-                    // Separar por comas
-                    while (getline(ss, idCapaItem, ',')) {
-                        int idCapa = stoi(idCapaItem);
-                        imgInsertada->capasUtilizadas->insertar(idCapa);
+                    // Extraer las capas separadas por coma
+                    string capasStr = linea.substr(posLlaveAbre + 1, posLlaveCierra - posLlaveAbre - 1);
+                    
+                    if (!capasStr.empty() && imgInsertada != nullptr) {
+                        stringstream ss(capasStr);
+                        string idCapaItem;
+                        // Separar por comas
+                        while (getline(ss, idCapaItem, ',')) {
+                            // Limpiar posibles espacios extra
+                            size_t inicioItem = idCapaItem.find_first_not_of(" \t");
+                            if(inicioItem != string::npos){
+                                int idCapa = stoi(idCapaItem.substr(inicioItem));
+                                imgInsertada->capasUtilizadas->insertar(idCapa);
+                            }
+                        }
                     }
+                } catch (const exception& e) {
+                     cout << "[ADVERTENCIA] Error de sintaxis al procesar imagen, se omitira la linea: " << linea << endl;
                 }
-                // Nota: Si capasStr está vacío, la imagen no tiene capas.
-                // Al generarse, el sistema deberá interpretarlo como un píxel negro.
             }
         }
         archivo.close();
@@ -130,29 +142,37 @@ public:
         while (getline(ssUsuarios, bloqueUsuario, ';')) {
             size_t posDosPuntos = bloqueUsuario.find(":");
             if (posDosPuntos != string::npos) {
-                // Limpiar posibles espacios en blanco
-                size_t inicioUser = bloqueUsuario.find_first_not_of(" \n\r\t");
-                if(inicioUser == string::npos) continue;
-                
-                string username = bloqueUsuario.substr(inicioUser, posDosPuntos - inicioUser);
-                string imagenesStr = bloqueUsuario.substr(posDosPuntos + 1);
-                
-                // Insertar usuario
-                sistemaUsuarios.insert(username);
-                UserNode* nodoUser = sistemaUsuarios.search(username);
-                
-                // Si tiene imágenes asociadas, agregarlas a su lista simple
-                if (!imagenesStr.empty() && nodoUser != nullptr) {
-                    stringstream ssImg(imagenesStr);
-                    string idImgItem;
-                    while (getline(ssImg, idImgItem, ',')) {
-                        int idImg = stoi(idImgItem);
-                        // Buscar la imagen en la galería para obtener su nombre (opcional pero recomendado)
-                        Imagen* imgRef = galeriaGlobal.buscar(idImg);
-                        string nombreImg = (imgRef != nullptr) ? imgRef->nombre : "Imagen_Desconocida";
-                        
-                        nodoUser->imagenesCreadas->insertar(idImg, nombreImg);
+                try { // <-- INICIO DEL SEGURO PARA USUARIOS
+                    // Limpiar posibles espacios en blanco
+                    size_t inicioUser = bloqueUsuario.find_first_not_of(" \n\r\t");
+                    if(inicioUser == string::npos) continue;
+                    
+                    string username = bloqueUsuario.substr(inicioUser, posDosPuntos - inicioUser);
+                    string imagenesStr = bloqueUsuario.substr(posDosPuntos + 1);
+                    
+                    // Insertar usuario
+                    sistemaUsuarios.insert(username);
+                    UserNode* nodoUser = sistemaUsuarios.search(username);
+                    
+                    // Si tiene imágenes asociadas, agregarlas a su lista simple
+                    if (!imagenesStr.empty() && nodoUser != nullptr) {
+                        stringstream ssImg(imagenesStr);
+                        string idImgItem;
+                        while (getline(ssImg, idImgItem, ',')) {
+                            // Limpiar espacios extra
+                            size_t inicioItem = idImgItem.find_first_not_of(" \t\r\n");
+                            if(inicioItem != string::npos){
+                                int idImg = stoi(idImgItem.substr(inicioItem));
+                                // Buscar la imagen en la galería para obtener su nombre
+                                Imagen* imgRef = galeriaGlobal.buscar(idImg);
+                                string nombreImg = (imgRef != nullptr) ? imgRef->nombre : "Imagen_Masiva_" + to_string(idImg);
+                                
+                                nodoUser->imagenesCreadas->insertar(idImg, nombreImg);
+                            }
+                        }
                     }
+                } catch (const exception& e) {
+                     cout << "[ADVERTENCIA] Error de sintaxis al procesar usuario, se omitira: " << bloqueUsuario << endl;
                 }
             }
         }

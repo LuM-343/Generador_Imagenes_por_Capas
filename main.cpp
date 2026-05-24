@@ -102,8 +102,8 @@ void menuCargaMasiva() {
         
         // Seguro contra letras o errores en el buffer
         if (!(cin >> opcion)) {
-            cin.clear(); 
-            cin.ignore(10000, '\n'); 
+            cin.clear(); // Limpia el estado de error de cin
+            cin.ignore(10000, '\n'); // Descarta el texto basura atascado
             cout << "\n[ERROR] Entrada no valida. Por favor, ingrese un numero." << endl;
             continue; // Reinicia el ciclo
         }
@@ -112,9 +112,10 @@ void menuCargaMasiva() {
             case 1:
                 cout << "\nIngrese la ruta del archivo de capas (.cap): ";
                 cin.ignore(); // Limpiamos el salto de linea ('\n') antes de usar getline
-                getline(cin, rutaArchivo); // Se lee toda la ruta evitando espacios
+                getline(cin, rutaArchivo); // Leemos TODA la ruta, incluyendo espacios
                 
-                //Previene el error de copiar la ruta de acceso con las comillas
+                // Tip: Si copias la ruta desde Windows usando "Copiar como ruta de acceso", 
+                // suele traer comillas dobles "". Esto las elimina automáticamente:
                 if (!rutaArchivo.empty() && rutaArchivo.front() == '"' && rutaArchivo.back() == '"') {
                     rutaArchivo = rutaArchivo.substr(1, rutaArchivo.length() - 2);
                 }
@@ -180,36 +181,28 @@ void menuReportes() {
                 galeriaGlobal.graficarLista();
                 break;
 
+            // CORRECCIÓN: Ahora grafica el árbol global de todas las capas
             case 3: {
-                int idImg;
-                cout << "\nIngrese el ID de la imagen para ver su arbol de capas: ";
-                cin >> idImg;
-                Imagen* img = galeriaGlobal.buscar(idImg);
-                if (img != nullptr) {
-                    img->arbolCapas->graficarArbol("ArbolCapas_Img_" + to_string(idImg));
-                } else {
-                    cout << "[ERROR] Imagen no encontrada." << endl;
-                }
+                cout << "\nGenerando reporte del Arbol Global de Capas..." << endl;
+                // Usamos la variable global donde la Carga Masiva guarda la información
+                arbolCapasGlobal.graficarArbol("Arbol_Global_Capas"); 
                 break;
             }
 
+            // CORRECCIÓN: Ahora busca la matriz dispersa directamente en el árbol global
             case 4: {
-                int idImg, idCapa;
-                cout << "\nIngrese el ID de la imagen dueña de la capa: ";
-                cin >> idImg;
-                Imagen* img = galeriaGlobal.buscar(idImg);
+                int idCapa;
+                cout << "\nIngrese el ID de la capa que desea graficar (Matriz Dispersa): ";
+                cin >> idCapa;
                 
-                if (img != nullptr) {
-                    cout << "Ingrese el ID de la capa a graficar: ";
-                    cin >> idCapa;
-                    LayerNode* capa = img->arbolCapas->search(idCapa);
-                    if (capa != nullptr) {
-                        capa->matriz->graficarMatriz("Matriz_Img" + to_string(idImg) + "_Capa" + to_string(idCapa));
-                    } else {
-                        cout << "[ERROR] Capa no encontrada en esta imagen." << endl;
-                    }
+                // Buscamos la capa directamente en el árbol general
+                LayerNode* capa = arbolCapasGlobal.search(idCapa);
+                
+                if (capa != nullptr) {
+                    cout << "\nGenerando grafica de la matriz dispersa..." << endl;
+                    capa->matriz->graficarMatriz("Matriz_Capa_" + to_string(idCapa));
                 } else {
-                    cout << "[ERROR] Imagen no encontrada." << endl;
+                    cout << "[ERROR] La capa con ID " << idCapa << " no fue encontrada." << endl;
                 }
                 break;
             }

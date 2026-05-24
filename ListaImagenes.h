@@ -78,6 +78,7 @@ public:
         return NULL; // Dio la vuelta completa y no la encontró
     }
 
+    // Método para graficar (EN ListaCircularDobleImagenes)
     void graficarLista() {
         if (cabeza == NULL) {
             cout << "[AVISO] La lista de imagenes esta vacia." << endl;
@@ -86,18 +87,21 @@ public:
 
         ofstream archivo("lista_imagenes.dot");
         archivo << "digraph ListaImagenes {\n";
-        archivo << "  rankdir=LR;\n";
-        archivo << "  node [shape=record, style=filled, fillcolor=lightyellow];\n";
+        archivo << "  rankdir=LR;\n"; // Alineación de izquierda a derecha
+        
+        // CAMBIO CLAVE: Usamos 'none' para habilitar las tablas HTML
+        archivo << "  node [shape=none];\n"; 
 
         Imagen* temp = cabeza;
         
-        // 1. Declarar todos los nodos de imágenes primero para alinearlos
-        archivo << "  { rank=same; ";
+        // 1. Declarar los nodos usando sintaxis HTML de Graphviz
         do {
-            archivo << "Img" << temp->id << " [label=\"{ID: " << temp->id << " | " << temp->nombre << "}\"]; ";
+            archivo << "  Img" << temp->id << " [label=<\n";
+            archivo << "    <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"lightyellow\">\n";
+            archivo << "      <TR><TD>ID: " << temp->id << "</TD><TD>" << temp->nombre << "</TD></TR>\n";
+            archivo << "    </TABLE>>];\n";
             temp = temp->siguiente;
         } while (temp != cabeza);
-        archivo << "}\n";
 
         // 2. Conectar la lista doblemente enlazada circular
         temp = cabeza;
@@ -105,7 +109,6 @@ public:
             archivo << "  Img" << temp->id << " -> Img" << temp->siguiente->id << ";\n";
             archivo << "  Img" << temp->id << " -> Img" << temp->anterior->id << ";\n";
             
-               
             temp = temp->siguiente;
         } while (temp != cabeza);
 
@@ -113,6 +116,6 @@ public:
         archivo.close();
 
         system("dot -Tpng lista_imagenes.dot -o Reporte_ListaImagenes.png");
-        cout << "[OK] Lista circular de imagenes graficada." << endl;
+        cout << "[OK] Lista circular de imagenes graficada sin errores." << endl;
     }
 };

@@ -7,3 +7,11 @@ output/arbol_usuarios.dot
 output/Reporte_Usuarios.png
 capas.txt
 imagenes.txt
+output/Arbol_Global_Capas.dot
+output/Arbol_Global_Capas.png
+output/lista_imagenes.dot
+output/Matriz_Capa_1.dot
+output/Matriz_Capa_1.png
+output/Matriz_Capa_2.dot
+output/Matriz_Capa_2.png
+output/Reporte_ListaImagenes.png
