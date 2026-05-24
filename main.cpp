@@ -323,7 +323,7 @@ void menuGeneracionHTML() {
                 int idImg; cout << "Ingrese el ID de la imagen a generar: "; cin >> idImg;
                 if (Imagen* img = galeriaGlobal.buscar(idImg)) {
                     vector<LayerNode*> capasDeImagen;
-                    NodoCapaSimple* tempCapaId = img->capasUtilizadas->cabeza; 
+                    NodoCapaSimple* tempCapaId = img->capasUtilizadas->getCabeza(); 
                     while(tempCapaId != nullptr) {
                         if (LayerNode* nodoReal = arbolCapasGlobal.search(tempCapaId->idCapa)) capasDeImagen.push_back(nodoReal);
                         tempCapaId = tempCapaId->siguiente;
@@ -348,7 +348,7 @@ void menuGeneracionHTML() {
                     int idImg; cin >> idImg;
                     if (Imagen* img = galeriaGlobal.buscar(idImg)) {
                         vector<LayerNode*> capasDeImagen;
-                        NodoCapaSimple* tempCapaId = img->capasUtilizadas->cabeza; 
+                        NodoCapaSimple* tempCapaId = img->capasUtilizadas->getCabeza(); 
                         while(tempCapaId != nullptr) {
                             if (LayerNode* nodoReal = arbolCapasGlobal.search(tempCapaId->idCapa)) capasDeImagen.push_back(nodoReal);
                             tempCapaId = tempCapaId->siguiente;

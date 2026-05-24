@@ -153,15 +153,15 @@ public:
 
     // Función auxiliar para Inorden Limitado
     void inordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
-        if (node == nullptr || lista.size() >= limite) return;
+        if (node == nullptr || (int)lista.size() >= limite) return;
         inordenLimitado(node->left, lista, limite);
-        if (lista.size() < limite) lista.push_back(node);
+        if ((int)lista.size() < limite) lista.push_back(node);
         inordenLimitado(node->right, lista, limite);
     }
 
     // Función auxiliar para Preorden Limitado
     void preordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
-        if (node == nullptr || lista.size() >= limite) return;
+        if (node == nullptr || (int)lista.size() >= limite) return;
         lista.push_back(node);
         preordenLimitado(node->left, lista, limite);
         preordenLimitado(node->right, lista, limite);
@@ -169,12 +169,12 @@ public:
 
     // Función auxiliar para Postorden Limitado
     void postordenLimitado(LayerNode* node, vector<LayerNode*>& lista, int limite) {
-        if (node == nullptr || lista.size() >= limite) return;
+        if (node == nullptr || (int)lista.size() >= limite) return;
         postordenLimitado(node->left, lista, limite);
         postordenLimitado(node->right, lista, limite);
-        if (lista.size() < limite) lista.push_back(node);
+        if ((int)lista.size() < limite) lista.push_back(node);
     }
-
+    
     // Métodos para obtener los vectores
     vector<LayerNode*> obtenerCapas(int limite, string recorrido) {
         vector<LayerNode*> lista;

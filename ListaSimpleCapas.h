@@ -24,6 +24,9 @@ public:
         cabeza = nullptr;
     }
 
+    NodoCapaSimple* getCabeza() {
+        return cabeza;
+    }
     // Insertar al final de la lista simple
     void insertar(int idCapa) {
         NodoCapaSimple* nuevo = new NodoCapaSimple(idCapa);
