@@ -90,6 +90,16 @@ private:
         }
     }
 
+    LayerNode* search(LayerNode* node, int id) {
+        if (node == nullptr || node->id == id)
+            return node;
+
+        if (node->id < id)
+            return search(node->right, id);
+
+        return search(node->left, id);
+    }
+
 public:
     LayerAVLTree() { root = nullptr; }
 
@@ -100,5 +110,9 @@ public:
     void display() {
         inorden(root);
         cout << endl;
+    }
+
+    LayerNode* search(int id) {
+        return search(root, id);
     }
 };

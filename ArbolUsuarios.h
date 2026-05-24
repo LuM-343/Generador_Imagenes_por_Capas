@@ -2,18 +2,21 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include "ListaSimpleImagenes.h" 
 
 using namespace std;
 
 class UserNode {
 public:
     string username;
+    ListaSimpleImagenes* imagenesCreadas; 
     UserNode* left;
     UserNode* right;
     int height;
 
     UserNode(string username) {
         this->username = username;
+        this->imagenesCreadas = new ListaSimpleImagenes();
         left = right = nullptr;
         height = 1;
     }
@@ -85,11 +88,28 @@ private:
         }
     }
 
+    UserNode* search(UserNode* node, string username) {
+        // Caso base: raíz nula o la llave está presente en la raíz
+        if (node == nullptr || node->username == username)
+            return node;
+
+        // La llave es mayor que la llave de la raíz
+        if (node->username < username)
+            return search(node->right, username);
+
+        // La llave es menor que la llave de la raíz
+        return search(node->left, username);
+    }
+
 public:
     UserAVLTree() { root = nullptr; }
 
     void insert(string username) {
         root = insert(root, username);
+    }
+
+    UserNode* search(string username) {
+        return search(root, username);
     }
 
     void display() {

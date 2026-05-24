@@ -1,21 +1,24 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "ArbolCapas.h" // Conectamos el arbol de capas con la imagen
+#include "ArbolCapas.h" 
+#include "ListaSimpleCapas.h" 
 
 using namespace std;
 
 struct Imagen {
     int id;
     string nombre;
-    LayerAVLTree* arbolCapas; // Cada imagen tiene su propio arbol de capas
+    LayerAVLTree* arbolCapas; 
+    ListaSimpleCapas* capasUtilizadas; 
     Imagen* siguiente;
     Imagen* anterior;
 
     Imagen(int _id, string _nombre) {
         id = _id;
         nombre = _nombre;
-        arbolCapas = new LayerAVLTree(); // Inicializamos el arbol vacio
+        arbolCapas = new LayerAVLTree(); 
+        capasUtilizadas = new ListaSimpleCapas(); // <-- Inicializa la lista
         siguiente = NULL;
         anterior = NULL;
     }
@@ -56,5 +59,21 @@ public:
             cout << "ID: " << temp->id << " | Nombre: " << temp->nombre << endl;
             temp = temp->siguiente;           
         } while (temp != cabeza);
+    }
+    
+    Imagen* buscar(int id) {
+        if (cabeza == NULL) {
+            return NULL; // La lista está vacía
+        }
+
+        Imagen* temp = cabeza;
+        do {
+            if (temp->id == id) {
+                return temp; // ¡Imagen encontrada!
+            }
+            temp = temp->siguiente;
+        } while (temp != cabeza);
+
+        return NULL; // Dio la vuelta completa y no la encontró
     }
 };
