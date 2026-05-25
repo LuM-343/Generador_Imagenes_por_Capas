@@ -91,6 +91,33 @@ public:
         return NULL; // Dio la vuelta completa y no la encontró
     }
 
+    bool eliminar(int id) {
+        if (cabeza == NULL) return false;
+
+        Imagen* temp = cabeza;
+        do {
+            if (temp->id == id) {
+                if (temp->siguiente == temp) {
+                    // Era el único nodo en la lista
+                    cabeza = NULL;
+                } else {
+                    // Desvincular el nodo actual reasignando los punteros
+                    temp->anterior->siguiente = temp->siguiente;
+                    temp->siguiente->anterior = temp->anterior;
+                    
+                    if (temp == cabeza) {
+                        cabeza = temp->siguiente; // Mover la cabeza si se eliminó el primero
+                    }
+                }
+                delete temp; // Liberar memoria
+                return true;
+            }
+            temp = temp->siguiente;
+        } while (temp != cabeza);
+
+        return false; // No se encontró
+    }
+
     // Método para graficar (EN ListaCircularDobleImagenes)
     void graficarLista() {
         if (cabeza == NULL) {

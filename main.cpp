@@ -1,3 +1,9 @@
+/*  ==========================================
+    Creado por Luis Manuel Velásquez González
+    Proyecto Estructura de Datos I
+    Universidad Rafael Landivar Quetzaltenango
+    ===========================================*/
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -48,10 +54,11 @@ void menuInicio() {
         cout << "=========================================" << endl;
         cout << "1. Iniciar Sesion" << endl;
         cout << "2. Registrar nuevo usuario" << endl;
-        cout << "3. Reportes del Estado de Memoria (Graphviz)" << endl;
-        cout << "4. Carga Masiva de Datos" << endl;
-        cout << "5. Generacion de Imagenes (HTML)" << endl;
-        cout << "6. Salir del programa" << endl;
+        cout << "3. Eliminar usuario del sistema" << endl; 
+        cout << "4. Reportes del Estado de Memoria (Graphviz)" << endl;
+        cout << "5. Carga Masiva de Datos" << endl;
+        cout << "6. Generacion de Imagenes (HTML)" << endl;
+        cout << "7. Salir del programa" << endl;
         cout << "Seleccione una opcion: ";
         
         if (!(cin >> opcion)) { cin.clear(); cin.ignore(10000, '\n'); continue; }
@@ -78,16 +85,25 @@ void menuInicio() {
                 }
                 break;
             case 3:
-                menuReportes();
+                cout << "\nIngrese el nombre del usuario a eliminar: ";
+                cin >> username;
+                if (sistemaUsuarios.eliminar(username)) {
+                    cout << "\n[OK] El usuario '" << username << "' ha sido eliminado del sistema." << endl;
+                } else {
+                    cout << "\n[ERROR] El usuario no existe." << endl;
+                }
                 break;
             case 4:
-                menuCargaMasiva();
+                menuReportes();
                 break;
             case 5:
-                menuGeneracionHTML();
+                menuCargaMasiva();
                 break;
             case 6:
-                cout << "\nGuardando cambios... ¡Hasta pronto!" << endl;
+                menuGeneracionHTML();
+                break;
+            case 7:
+                cout << "\nGuardando cambios... ¡ Hasta pronto!" << endl;
                 break;
             default:
                 cout << "\n[ERROR] Opcion no valida." << endl;
@@ -107,8 +123,9 @@ void menuUsuario(UserNode* usuarioActual) {
         cout << "-----------------------------------------" << endl;
         cout << "1. Crear una nueva imagen" << endl;
         cout << "2. Seleccionar / Editar una imagen" << endl;
-        cout << "3. Ver mis imagenes creadas (Historial)" << endl;
-        cout << "4. Cerrar Sesion (Regresar)" << endl;
+        cout << "3. Eliminar una imagen" << endl; 
+        cout << "4. Ver mis imagenes creadas (Historial)" << endl;
+        cout << "5. Cerrar Sesion (Regresar)" << endl;
         cout << "Seleccione una opcion: ";
         
         if (!(cin >> opcion)) { cin.clear(); cin.ignore(10000, '\n'); continue; }
@@ -139,11 +156,26 @@ void menuUsuario(UserNode* usuarioActual) {
                 }
                 break;
             }
-            case 3:
+            case 3: {
+                int idEliminar;
+                cout << "\nIngrese el ID de la imagen que desea eliminar: ";
+                cin >> idEliminar;
+                
+                // 1. Eliminar de la galería global
+                if (galeriaGlobal.eliminar(idEliminar)) {
+                    // 2. Eliminar del historial del usuario
+                    usuarioActual->imagenesCreadas->eliminar(idEliminar);
+                    cout << "\n[OK] Imagen eliminada permanentemente del sistema." << endl;
+                } else {
+                    cout << "\n[ERROR] No se encontro una imagen con ese ID." << endl;
+                }
+                break;
+            }
+            case 4:
                 cout << "\n--- HISTORIAL DE PROYECTOS ---" << endl;
                 usuarioActual->imagenesCreadas->mostrar();
                 break;
-            case 4:
+            case 5:
                 cout << "\nCerrando sesion..." << endl;
                 break;
             default:

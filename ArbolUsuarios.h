@@ -102,6 +102,65 @@ private:
         return search(node->left, username);
     }
 
+    UserNode* minValueNode(UserNode* node) {
+        UserNode* current = node;
+        while (current->left != nullptr)
+            current = current->left;
+        return current;
+    }
+
+    UserNode* remove(UserNode* root, string username) {
+        if (root == nullptr) return root;
+
+        if (username < root->username)
+            root->left = remove(root->left, username);
+        else if (username > root->username)
+            root->right = remove(root->right, username);
+        else {
+            // Nodo con uno o ningún hijo
+            if ((root->left == nullptr) || (root->right == nullptr)) {
+                UserNode* temp = root->left ? root->left : root->right;
+                if (temp == nullptr) {
+                    temp = root;
+                    root = nullptr;
+                } else
+                    *root = *temp; 
+                delete temp;
+            } else {
+                // Nodo con dos hijos: Obtener el sucesor inorden (el menor del subárbol derecho)
+                UserNode* temp = minValueNode(root->right);
+                
+                // Intercambiar datos clave
+                root->username = temp->username;
+                ListaSimpleImagenes* tempList = root->imagenesCreadas;
+                root->imagenesCreadas = temp->imagenesCreadas;
+                temp->imagenesCreadas = tempList;
+
+                // Eliminar el sucesor inorden
+                root->right = remove(root->right, temp->username);
+            }
+        }
+
+        if (root == nullptr) return root;
+
+        // Actualizar altura y balancear
+        root->height = 1 + max(height(root->left), height(root->right));
+        int balance = getBalance(root);
+
+        // Casos de rotación para re-balancear
+        if (balance > 1 && getBalance(root->left) >= 0) return rightRotate(root);
+        if (balance > 1 && getBalance(root->left) < 0) {
+            root->left = leftRotate(root->left);
+            return rightRotate(root);
+        }
+        if (balance < -1 && getBalance(root->right) <= 0) return leftRotate(root);
+        if (balance < -1 && getBalance(root->right) > 0) {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+        return root;
+    }
+
     void generarDOT(UserNode* node, ofstream& archivo) {
         if (node != nullptr) {
             // Escribir relación con el hijo izquierdo
@@ -131,6 +190,12 @@ public:
     void display() {
         inorden(root);
         cout << endl;
+    }
+
+    bool eliminar(string username) {
+        if (search(username) == nullptr) return false;
+        root = remove(root, username);
+        return true;
     }
 
     void graficarArbol() {

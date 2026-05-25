@@ -52,6 +52,32 @@ public:
         }
     }
 
+    bool eliminar(int id) {
+        if (cabeza == nullptr) return false;
+        
+        // Si es el primero
+        if (cabeza->idImagen == id) {
+            NodoImagenSimple* temp = cabeza;
+            cabeza = cabeza->siguiente;
+            delete temp;
+            return true;
+        }
+
+        // Buscar en el resto de la lista
+        NodoImagenSimple* actual = cabeza;
+        while (actual->siguiente != nullptr && actual->siguiente->idImagen != id) {
+            actual = actual->siguiente;
+        }
+
+        if (actual->siguiente != nullptr) {
+            NodoImagenSimple* temp = actual->siguiente;
+            actual->siguiente = actual->siguiente->siguiente;
+            delete temp;
+            return true;
+        }
+        return false;
+    }
+
     // Método para graficar la lista simple de imágenes de un usuario
     void graficarLista(string username) {
         if (cabeza == nullptr) {
