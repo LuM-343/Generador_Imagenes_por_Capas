@@ -48,7 +48,7 @@ void menuInicio() {
     int opcion = 0;
     string username;
 
-    while (opcion != 6) {
+    while (opcion != 7) {
         cout << "\n=========================================" << endl;
         cout << "   EDITOR DE PIXEL ART - PROYECTO FINAL  " << endl;
         cout << "=========================================" << endl;
@@ -117,7 +117,7 @@ void menuInicio() {
 void menuUsuario(UserNode* usuarioActual) {
     int opcion = 0;
 
-    while (opcion != 4) {
+    while (opcion != 5) {
         cout << "\n-----------------------------------------" << endl;
         cout << "  MENU DE USUARIO: " << usuarioActual->username << endl;
         cout << "-----------------------------------------" << endl;
