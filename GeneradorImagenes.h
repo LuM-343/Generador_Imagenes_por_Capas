@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "MatrizDispersa.h"
-#include "ArbolCapas.h"
+#include "estructuras/MatrizDispersa.h"
+#include "estructuras/ArbolCapas.h"
 
 using namespace std;
 

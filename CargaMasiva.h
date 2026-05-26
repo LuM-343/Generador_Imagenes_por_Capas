@@ -4,9 +4,9 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "ArbolUsuarios.h"
-#include "ListaImagenes.h"
-#include "ArbolCapas.h"
+#include "estructuras/ArbolUsuarios.h"
+#include "estructuras/ListaImagenes.h"
+#include "estructuras/ArbolCapas.h"
 
 using namespace std;
 

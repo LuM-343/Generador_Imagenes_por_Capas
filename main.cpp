@@ -7,10 +7,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "ArbolUsuarios.h"
-#include "ListaImagenes.h"
-#include "ArbolCapas.h"
-#include "MatrizDispersa.h"
+#include "estructuras/ArbolUsuarios.h"
+#include "estructuras/ListaImagenes.h"
+#include "estructuras/ArbolCapas.h"
+#include "estructuras/MatrizDispersa.h"
 #include "CargaMasiva.h"
 #include "GeneradorImagenes.h"
 
@@ -103,7 +103,7 @@ void menuInicio() {
                 menuGeneracionHTML();
                 break;
             case 7:
-                cout << "\nGuardando cambios... ¡ Hasta pronto!" << endl;
+                cout << "\nGracias por usar, nos vemos pronto !!!" << endl;
                 break;
             default:
                 cout << "\n[ERROR] Opcion no valida." << endl;
