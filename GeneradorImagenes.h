@@ -55,7 +55,7 @@ public:
                 if (pixel != nullptr) {
                     archivo << "  <div class='pixel' style='background-color: " << pixel->color << ";'></div>\n";
                 } else {
-                    archivo << "  <div class='pixel'></div>\n"; }
+                    archivo << "  <div class='pixel'></div>\n"; 
                 }
             }
         }
