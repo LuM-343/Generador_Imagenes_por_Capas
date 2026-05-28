@@ -10,11 +10,11 @@ using namespace std;
 
 class GeneradorImagenes {
 public:
-    // Función principal para compilar un vector de capas en un solo HTML
+    
     static void exportarHTML(string nombreArchivo, vector<LayerNode*> capasAUtilizar) {
         ofstream archivo(nombreArchivo + ".html");
 
-        // Regla del manual: Si no hay capas, se genera un pixel negro
+        // Si no hay capas, se genera un pixel negro
         if (capasAUtilizar.empty()) {
             archivo << "<!DOCTYPE html>\n<html>\n<head>\n<style>\n";
             archivo << "  .lienzo { display: grid; grid-template-columns: repeat(1, 20px); gap: 1px; background-color: #ccc; width: max-content; border: 2px solid black; }\n";
@@ -42,7 +42,7 @@ public:
         archivo << "<!DOCTYPE html>\n<html>\n<head>\n<style>\n";
         // Calculamos las columnas para el Grid
         archivo << "  .lienzo { display: grid; grid-template-columns: repeat(" << maxCols << ", 20px); gap: 1px; background-color: #ccc; width: max-content; border: 2px solid black; }\n";
-        // Regla del manual: Fondo blanco para las áreas sin color
+        // Fondo blanco para las áreas sin color
         archivo << "  .pixel { width: 20px; height: 20px; background-color: #ffffff; }\n";
         archivo << "</style>\n</head>\n<body>\n";
         archivo << "<h2>Imagen Exportada: " << nombreArchivo << "</h2>\n";
@@ -55,7 +55,7 @@ public:
                 if (pixel != nullptr) {
                     archivo << "  <div class='pixel' style='background-color: " << pixel->color << ";'></div>\n";
                 } else {
-                    archivo << "  <div class='pixel'></div>\n"; // Quedará blanco por defecto
+                    archivo << "  <div class='pixel'></div>\n"; }
                 }
             }
         }
