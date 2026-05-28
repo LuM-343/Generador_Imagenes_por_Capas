@@ -281,8 +281,7 @@ public:
         while (tempRow != nullptr) {
             Node* tempNode = tempRow->firstNode;
             while (tempNode != nullptr) {
-                // Al insertar en el lienzo final, sobreescribe automáticamente
-                // cualquier color que estuviera abajo en la misma coordenada
+                // Al insertar en el lienzo final, sobreescribe automáticamente los colores inferiores
                 lienzoFinal->insert(tempNode->row, tempNode->col, tempNode->color);
                 tempNode = tempNode->right;
             }
