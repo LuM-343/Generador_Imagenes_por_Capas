@@ -14,7 +14,7 @@ public:
     static void exportarHTML(string nombreArchivo, vector<LayerNode*> capasAUtilizar) {
         ofstream archivo(nombreArchivo + ".html");
 
-        // Si no hay capas, se genera un pixel negro
+        // Si no hay capas, se genera un pixel negro.
         if (capasAUtilizar.empty()) {
             archivo << "<!DOCTYPE html>\n<html>\n<head>\n<style>\n";
             archivo << "  .lienzo { display: grid; grid-template-columns: repeat(1, 20px); gap: 1px; background-color: #ccc; width: max-content; border: 2px solid black; }\n";
