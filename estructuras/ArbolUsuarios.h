@@ -215,8 +215,7 @@ public:
         archivo << "}\n";
         archivo.close();
 
-        // 3. Ejecutar comando de Graphviz en la terminal
-        // Nota: Debes tener Graphviz instalado en tu PC y agregado al PATH
+        // Ejecutar el Graphiz 
         system("dot -Tpng arbol_usuarios.dot -o Reporte_Usuarios.png");
         
         cout << "[OK] Reporte generado exitosamente como 'Reporte_Usuarios.png'." << endl;
