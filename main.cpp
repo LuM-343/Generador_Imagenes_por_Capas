@@ -34,7 +34,7 @@ void menuCargaMasiva();
 void menuGeneracionHTML();
 
 // ==========================================
-// FUNCIoN PRINCIPAL
+// FUNCION PRINCIPAL
 // ==========================================
 int main() {
     menuInicio();
@@ -112,7 +112,7 @@ void menuInicio() {
 }
 
 // ==========================================
-// 2. MENÚ DE USUARIO (Mantenimiento de Imágenes)
+// 2. MENÚ DE USUARIO 
 // ==========================================
 void menuUsuario(UserNode* usuarioActual) {
     int opcion = 0;
@@ -185,7 +185,7 @@ void menuUsuario(UserNode* usuarioActual) {
 }
 
 // ==========================================
-// 3. MENÚ DE EDITOR (Matriz Dispersa y Capas)
+// 3. MENÚ DE EDITOR 
 // ==========================================
 void menuEditor(Imagen* imagenActual) {
     int opcion = 0;
@@ -239,7 +239,7 @@ void menuEditor(Imagen* imagenActual) {
 }
 
 // ==========================================
-// 4. MENÚ DE REPORTES (Graphviz)
+// 4. MENÚ DE REPORTES 
 // ==========================================
 void menuReportes() {
     int opcion = 0;
@@ -326,7 +326,7 @@ void menuCargaMasiva() {
 }
 
 // ==========================================
-// 6. MENÚ DE GENERACIoN HTML
+// 6. MENÚ DE GENERACION HTML
 // ==========================================
 void menuGeneracionHTML() {
     int opcion = 0;
